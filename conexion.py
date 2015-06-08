@@ -12,23 +12,27 @@ print "comienza el log\n"
 while True:
         lectura = miport.readline()
         if (lectura != ""):
-                mensaje = lectura.split('P')[0]
+                mensajeFULL = lectura.split('P')[0]
+				idDestino = mensajeFULL.split(';')[0]
+				mensaje = mensajeFULL.split(';')[1]
                 salida.write('lectura ------>  '+lectura+' / mensajote ----> '+mensaje+'\n')
                 print "lectura ------>  " + lectura + " / mensajote ----> " + mensaje + "\n"
                 f = open('ficheros/conectados', 'r')
-                for line in f:
-                        partes = line.split(' ')
-                        otroTTY = partes[1]
-                        salida.write('el otro: '+otroTTY+'\n')
-                        print "el otro: " + otroTTY + "\n"
-                        if (otroTTY!=miTTY):
-                                otroport = serial.Serial("/dev/"+otroTTY, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS  , timeout=3.0)
-                                otroport.open()
-                                otroport.isOpen()
-                                menAux=mensaje+'P\r'
-                                print 'menAuxer:   --- ' + menAux + '\n'
-                                otroport.write(menAux)
-                                salida.write('escribimos ---->'+mensaje+'P\n')
-                                print "escribimos -->"+mensaje+"P\n"
-                                otroport.close()
-                f.close()
+				destinoTTY='ttyUSB'+idDestino
+				if(destinoTTY!=miTTY):
+						for line in f:
+								partes = line.split(' ')
+								otroTTY = partes[1]
+								salida.write('el otro: '+otroTTY+'\n')
+								print "el otro: " + otroTTY + "\n"
+								if (otroTTY==destinoTTY):
+										otroport = serial.Serial("/dev/"+otroTTY, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS  , timeout=3.0)
+										otroport.open()
+										otroport.isOpen()
+										menAux=mensaje+'P\r'
+										print 'menAuxer:   --- ' + menAux + '\n'
+										otroport.write(menAux)
+										salida.write('escribimos ---->'+mensaje+'P\n')
+										print "escribimos -->"+mensaje+"P\n"
+										otroport.close()
+						f.close()
